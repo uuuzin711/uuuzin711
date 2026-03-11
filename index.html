@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 공학개론</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        deep: '#050505',
+                        surface: '#121212',
+                        surfaceHover: '#1e1e1e',
+                        accent: '#38bdf8', // 딥테크 느낌의 시안 색상
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* 패럴랙스 히어로 섹션 */
+        .hero-bg {
+            background-image: url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop');
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        /* 스크롤 트리거 애니메이션 (Fade-in & Slide-up) */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 애니메이션 딜레이 */
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        .delay-500 { transition-delay: 0.5s; }
+
+        /* 페이지 전환 효과 */
+        .page-view {
+            display: none;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .page-view.active-view {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 멀티미디어 카드 호버 효과 */
+        .media-card:hover .media-overlay {
+            opacity: 1;
+        }
+        .media-card:hover img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-accent selection:text-deep">
+
+    <!-- 네비게이션 바 -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-deep/80 backdrop-blur-md border-b border-white/10" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" onclick="navigate('view-home')" class="text-xl font-bold tracking-tighter flex items-center gap-2 hover:text-accent transition-colors">
+                <i data-lucide="cpu" class="w-6 h-6 text-accent"></i>
+                AI Engineering
+            </a>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-gray-300">
+                <a href="#" onclick="navigate('view-home')" class="hover:text-white transition-colors">홈</a>
+                <a href="#" onclick="navigate('view-announcements')" class="hover:text-white transition-colors">공지사항</a>
+                <a href="#" onclick="navigate('view-ta')" class="hover:text-white transition-colors">조교진 소개</a>
+            </div>
+            <!-- 모바일 메뉴 버튼 (기능은 단순화) -->
+            <button class="md:hidden text-white">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 앱 컨테이너 (SPA 라우팅용) -->
+    <div id="app">
+
+        <!-- ==========================================
+             메인 홈 뷰 (시네마틱 & 패럴랙스 스크롤)
+        =========================================== -->
+        <div id="view-home" class="page-view active-view">
+            
+            <!-- 1. 시네마틱 히어로 섹션 -->
+            <section class="relative h-screen flex items-center justify-center overflow-hidden hero-bg">
+                <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-deep"></div>
+                
+                <div class="relative z-10 text-center px-4 max-w-5xl mx-auto flex flex-col items-center">
+                    <div class="reveal">
+                        <span class="px-4 py-1 border border-accent/50 text-accent rounded-full text-sm font-medium tracking-widest mb-6 inline-block uppercase bg-accent/10 backdrop-blur-sm">Spring 2026</span>
+                    </div>
+                    <h1 class="reveal delay-100 text-6xl md:text-8xl font-black mb-6 tracking-tighter leading-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
+                        AI 공학개론
+                    </h1>
+                    <p class="reveal delay-200 text-lg md:text-xl text-gray-300 font-light tracking-wide mb-10 max-w-3xl">
+                        26-1 강의 관련 공지 및 자료를 위한 공간입니다 :)
+                    </p>
+                    <div class="reveal delay-300">
+                        <button onclick="document.getElementById('overview').scrollIntoView({behavior: 'smooth'})" class="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-deep transition-all duration-300 animate-bounce cursor-pointer">
+                            <i data-lucide="arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. 공지사항 요약 섹션 (스크롤 트리거 & 카드형 UI) -->
+            <section id="overview" class="py-32 px-6 bg-deep">
+                <div class="max-w-7xl mx-auto">
+                    <div class="reveal flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/10 pb-6">
+                        <div>
+                            <h2 class="text-4xl md:text-5xl font-bold mb-4">최신 공지사항</h2>
+                            <p class="text-gray-400 text-lg">학습에 필요한 중요 정보와 일정을 확인하세요.</p>
+                        </div>
+                        <button onclick="navigate('view-announcements')" class="mt-6 md:mt-0 flex items-center gap-2 text-accent hover:text-white transition-colors font-medium group">
+                            전체 공지사항 보기
+                            <i data-lucide="arrow-right" class="group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- 공지 카드 1 -->
+                        <div class="reveal delay-100 bg-surface rounded-2xl p-8 border border-white/5 hover:border-accent/30 transition-colors cursor-pointer group" onclick="navigate('view-announcements')">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="bg-accent/20 text-accent px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Notice</span>
+                                <span class="text-gray-500 text-sm">2026. 03. 02</span>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3 group-hover:text-accent transition-colors">[필독] 1주차 오리엔테이션 및 실습 환경 구축 안내</h3>
+                            <p class="text-gray-400 leading-relaxed mb-6">
+                                첫 수업은 실시간 비대면으로 진행됩니다. 수업 전 반드시 제공된 가이드에 따라 Docker 및 PyTorch 환경 세팅을 완료해 주시기 바랍니다.
+                            </p>
+                        </div>
+                        <!-- 공지 카드 2 -->
+                        <div class="reveal delay-200 bg-surface rounded-2xl p-8 border border-white/5 hover:border-accent/30 transition-colors cursor-pointer group" onclick="navigate('view-announcements')">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="bg-purple-500/20 text-purple-400 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Project</span>
+                                <span class="text-gray-500 text-sm">2026. 03. 05</span>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3 group-hover:text-accent transition-colors">Term Project 팀 빌딩 일정 안내</h3>
+                            <p class="text-gray-400 leading-relaxed mb-6">
+                                자율주행 시뮬레이션 프로젝트를 위한 4인 1조 팀 구성을 3월 15일까지 완료해야 합니다. 슬랙 채널을 통해 자유롭게 팀원을 모집하세요.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. 조교팀 요약 섹션 (멀티미디어 임베딩 & 입체감) -->
+            <section class="py-32 px-6 bg-surface border-t border-white/5">
+                <div class="max-w-7xl mx-auto">
+                    <div class="reveal flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/10 pb-6">
+                        <div>
+                            <h2 class="text-4xl md:text-5xl font-bold mb-4">TA Team</h2>
+                            <p class="text-gray-400 text-lg">학생 여러분들의 학습을 지원할 조교진입니다.</p>
+                        </div>
+                        <button onclick="navigate('view-ta')" class="mt-6 md:mt-0 flex items-center gap-2 text-accent hover:text-white transition-colors font-medium group">
+                            조교진 프로필 전체보기
+                            <i data-lucide="arrow-right" class="group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <!-- 5명의 TA 미니 그리드 (첫인상용) -->
+                    <div class="flex flex-wrap justify-center gap-6 reveal delay-100">
+                        <!-- 반복문을 활용한 TA 요약 카드 -->
+                        <div class="w-full sm:w-[45%] lg:w-[30%] bg-deep rounded-xl overflow-hidden border border-white/5 group cursor-pointer" onclick="navigate('view-ta')">
+                            <div class="h-48 overflow-hidden relative">
+                                <div class="absolute inset-0 bg-accent/20 mix-blend-overlay z-10 group-hover:opacity-0 transition-opacity duration-500"></div>
+                                <img src="https://api.dicebear.com/9.x/notionists/svg?seed=TA1&backgroundColor=1e293b" alt="TA 1" class="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700">
+                            </div>
+                            <div class="p-5 text-center">
+                                <h4 class="text-lg font-bold">조교1 (Head TA)</h4>
+                                <p class="text-sm text-accent mt-1">Computer Vision</p>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full sm:w-[45%] lg:w-[30%] bg-deep rounded-xl overflow-hidden border border-white/5 group cursor-pointer" onclick="navigate('view-ta')">
+                            <div class="h-48 overflow-hidden relative">
+                                <div class="absolute inset-0 bg-accent/20 mix-blend-overlay z-10 group-hover:opacity-0 transition-opacity duration-500"></div>
+                                <img src="https://api.dicebear.com/9.x/notionists/svg?seed=TA2&backgroundColor=1e293b" alt="TA 2" class="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700">
+                            </div>
+                            <div class="p-5 text-center">
+                                <h4 class="text-lg font-bold">조교2</h4>
+                                <p class="text-sm text-accent mt-1">Reinforcement Learning</p>
+                            </div>
+                        </div>
+
+                        <div class="w-full sm:w-[45%] lg:w-[30%] bg-deep rounded-xl overflow-hidden border border-white/5 group cursor-pointer" onclick="navigate('view-ta')">
+                            <div class="h-48 overflow-hidden relative">
+                                <div class="absolute inset-0 bg-accent/20 mix-blend-overlay z-10 group-hover:opacity-0 transition-opacity duration-500"></div>
+                                <img src="https://api.dicebear.com/9.x/notionists/svg?seed=TA3&backgroundColor=1e293b" alt="TA 3" class="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700">
+                            </div>
+                            <div class="p-5 text-center">
+                                <h4 class="text-lg font-bold">조교3</h4>
+                                <p class="text-sm text-accent mt-1">System Architecture</p>
+                            </div>
+                        </div>
+
+                        <div class="w-full sm:w-[45%] lg:w-[30%] bg-deep rounded-xl overflow-hidden border border-white/5 group cursor-pointer" onclick="navigate('view-ta')">
+                            <div class="h-48 overflow-hidden relative">
+                                <div class="absolute inset-0 bg-accent/20 mix-blend-overlay z-10 group-hover:opacity-0 transition-opacity duration-500"></div>
+                                <img src="https://api.dicebear.com/9.x/notionists/svg?seed=TA4&backgroundColor=1e293b" alt="TA 4" class="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700">
+                            </div>
+                            <div class="p-5 text-center">
+                                <h4 class="text-lg font-bold">조교4</h4>
+                                <p class="text-sm text-accent mt-1">NLP & Prompt Engineering</p>
+                            </div>
+                        </div>
+
+                        <div class="w-full sm:w-[45%] lg:w-[30%] bg-deep rounded-xl overflow-hidden border border-white/5 group cursor-pointer" onclick="navigate('view-ta')">
+                            <div class="h-48 overflow-hidden relative">
+                                <div class="absolute inset-0 bg-accent/20 mix-blend-overlay z-10 group-hover:opacity-0 transition-opacity duration-500"></div>
+                                <img src="https://api.dicebear.com/9.x/notionists/svg?seed=TA5&backgroundColor=1e293b" alt="TA 5" class="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700">
+                            </div>
+                            <div class="p-5 text-center">
+                                <h4 class="text-lg font-bold">조교5</h4>
+                                <p class="text-sm text-accent mt-1">Data Pipeline & MLOps</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- ==========================================
+             공지사항 상세 페이지 뷰
+        =========================================== -->
+        <div id="view-announcements" class="page-view pt-32 pb-24 px-6 min-h-screen bg-deep">
+            <div class="max-w-4xl mx-auto">
+                <button onclick="navigate('view-home')" class="mb-8 flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> 돌아가기
+                </button>
+                
+                <h1 class="reveal text-4xl md:text-6xl font-black mb-4">공지사항</h1>
+                <p class="reveal delay-100 text-gray-400 text-lg mb-16">AI 공학개론 수업의 모든 일정과 안내사항을 한눈에 확인하세요.</p>
+
+                <div class="space-y-6">
+                    <!-- 리스트 아이템 -->
+                    <div class="reveal delay-200 bg-surface rounded-xl p-6 border border-white/5 flex flex-col md:flex-row gap-6 items-start hover:border-accent/50 transition-colors">
+                        <div class="md:w-32 flex-shrink-0">
+                            <span class="block text-accent font-bold mb-1">Notice</span>
+                            <span class="text-sm text-gray-500">2026. 03. 02</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">[필독] 1주차 오리엔테이션 및 실습 환경 구축 안내</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                첫 수업은 실시간 비대면으로 진행됩니다. 수업 전 반드시 제공된 가이드에 따라 Docker 및 PyTorch 환경 세팅을 완료해 주시기 바랍니다. 실습 환경에 문제가 있는 경우 즉시 슬랙의 #help 채널에 문의바랍니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="reveal delay-300 bg-surface rounded-xl p-6 border border-white/5 flex flex-col md:flex-row gap-6 items-start hover:border-accent/50 transition-colors">
+                        <div class="md:w-32 flex-shrink-0">
+                            <span class="block text-purple-400 font-bold mb-1">Project</span>
+                            <span class="text-sm text-gray-500">2026. 03. 05</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">Term Project 팀 빌딩 일정 안내</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                자율주행 시뮬레이션 프로젝트를 위한 4인 1조 팀 구성을 3월 15일까지 완료해야 합니다. 
+                                슬랙 채널을 통해 자유롭게 팀원을 모집하시고, 확정된 명단은 조교 이메일로 송부 부탁드립니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="reveal delay-400 bg-surface rounded-xl p-6 border border-white/5 flex flex-col md:flex-row gap-6 items-start hover:border-accent/50 transition-colors">
+                        <div class="md:w-32 flex-shrink-0">
+                            <span class="block text-green-400 font-bold mb-1">Assignment</span>
+                            <span class="text-sm text-gray-500">2026. 03. 10</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">HW1: Neural Network Scratch Implementation</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                첫 번째 과제가 업로드 되었습니다. 외부 라이브러리(PyTorch, TensorFlow 등)를 사용하지 않고 numpy만을 이용하여 간단한 MLP를 구현하는 과제입니다. 제출 기한은 3월 24일 23:59입니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==========================================
+             조교팀 소개 상세 페이지 뷰 (고도화된 기술의 시각화)
+        =========================================== -->
+        <div id="view-ta" class="page-view pt-32 pb-24 px-6 min-h-screen bg-deep relative">
+            <div class="max-w-7xl mx-auto relative z-10">
+                <button onclick="navigate('view-home')" class="mb-8 flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> 돌아가기
+                </button>
+
+                <div class="reveal mb-16">
+                    <h1 class="text-4xl md:text-6xl font-black mb-4">Meet the TA Team</h1>
+                    <p class="text-gray-400 text-lg max-w-2xl">
+                        여러분의 성장을 이끌 5명의 조교를 소개합니다. 
+                        오피스 아워를 적극 활용하여 문제를 해결하세요.
+                    </p>
+                </div>
+
+                <!-- 조교 상세 카드 리스트 -->
+                <div class="space-y-12">
+                    <!-- TA 1 -->
+                    <div class="reveal bg-surface rounded-3xl overflow-hidden border border-white/10 flex flex-col lg:flex-row">
+                        <div class="lg:w-1/3 relative h-64 lg:h-auto media-card overflow-hidden">
+                            <img src="https://api.dicebear.com/9.x/notionists/svg?seed=TA1&backgroundColor=1e293b" alt="TA 1" class="w-full h-full object-cover transition-transform duration-700">
+                            <!-- 멀티미디어 시뮬레이션 오버레이 효과 (Waabi World 연상) -->
+                            <div class="absolute inset-0 bg-accent/10 flex items-center justify-center opacity-0 media-overlay transition-opacity duration-500">
+                                <i data-lucide="play-circle" class="w-16 h-16 text-white drop-shadow-lg"></i>
+                            </div>
+                        </div>
+                        <div class="lg:w-2/3 p-10 flex flex-col justify-center">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-3xl font-bold mb-1">조교1</h3>
+                                    <p class="text-accent font-medium">Head TA / Computer Vision</p>
+                                </div>
+                                <span class="bg-white/10 text-white px-3 py-1 rounded-full text-sm">Office Hour: Mon 14:00</span>
+                            </div>
+                            <p class="text-gray-400 leading-relaxed mb-6">
+                                "비전 시스템의 한계를 극복하는 물리적 인공지능에 집중하고 있습니다."<br>
+                                자율주행 객체 인식 모델 최적화 연구를 진행 중입니다. 과제 전반에 대한 아키텍처 설계와 PyTorch 딥러닝 프레임워크 관련 질문을 환영합니다.
+                            </p>
+                            <div class="flex gap-4 text-sm font-medium">
+                                <span class="flex items-center gap-2 text-gray-300"><i data-lucide="mail" class="w-4 h-4"></i> bme.ta1@ai.edu</span>
+                                <span class="flex items-center gap-2 text-gray-300"><i data-lucide="map-pin" class="w-4 h-4"></i> AIM Lab 101</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TA 2 -->
+                    <div class="reveal delay-100 bg-surface rounded-3xl overflow-hidden border border-white/10 flex flex-col lg:flex-row-reverse">
+                        <div class="lg:w-1/3 relative h-64 lg:h-auto media-card overflow-hidden">
+                            <img src="https://api.dicebear.com/9.x/notionists/svg?seed=TA2&backgroundColor=1e293b" alt="TA 2" class="w-full h-full object-cover transition-transform duration-700">
+                            <div class="absolute inset-0 bg-accent/10 flex items-center justify-center opacity-0 media-overlay transition-opacity duration-500">
+                                <i data-lucide="play-circle" class="w-16 h-16 text-white drop-shadow-lg"></i>
+                            </div>
+                        </div>
+                        <div class="lg:w-2/3 p-10 flex flex-col justify-center">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-3xl font-bold mb-1">조교2</h3>
+                                    <p class="text-accent font-medium">Reinforcement Learning</p>
+                                </div>
+                                <span class="bg-white/10 text-white px-3 py-1 rounded-full text-sm">Office Hour: Wed 10:00</span>
+                            </div>
+                            <p class="text-gray-400 leading-relaxed mb-6">
+                                시뮬레이터 환경에서의 강화학습 에이전트 학습(Mixed Reality Testing)을 연구합니다. 
+                                상태 공간(State space) 정의 및 보상 함수(Reward function) 설계의 디버깅을 돕겠습니다.
+                            </p>
+                            <div class="flex gap-4 text-sm font-medium">
+                                <span class="flex items-center gap-2 text-gray-300"><i data-lucide="mail" class="w-4 h-4"></i> bme.ta2@ai.edu</span>
+                                <span class="flex items-center gap-2 text-gray-300"><i data-lucide="map-pin" class="w-4 h-4"></i> AIM Lab 101</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TA 3 -->
+                    <div class="reveal delay-200 bg-surface rounded-3xl overflow-hidden border border-white/10 flex flex-col lg:flex-row">
+                        <div class="lg:w-1/3 relative h-64 lg:h-auto media-card overflow-hidden">
+                            <img src="https://api.dicebear.com/9.x/notionists/svg?seed=TA3&backgroundColor=1e293b" alt="TA 3" class="w-full h-full object-cover transition-transform duration-700">
+                            <div class="absolute inset-0 bg-accent/10 flex items-center justify-center opacity-0 media-overlay transition-opacity duration-500">
+                                <i data-lucide="play-circle" class="w-16 h-16 text-white drop-shadow-lg"></i>
+                            </div>
+                        </div>
+                        <div class="lg:w-2/3 p-10 flex flex-col justify-center">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-3xl font-bold mb-1">조교3</h3>
+                                    <p class="text-accent font-medium">System Architecture</p>
+                                </div>
+                                <span class="bg-white/10 text-white px-3 py-1 rounded-full text-sm">Office Hour: Tue 15:00</span>
+                            </div>
+                            <p class="text-gray-400 leading-relaxed mb-6">
+                                거대한 뉴럴 네트워크를 실제 하드웨어에 배포(Deployment)하는 최적화 과정을 담당합니다.
+                                Docker 환경 구축 오류나 GPU 메모리 할당 에러가 발생한다면 언제든 찾아오세요.
+                            </p>
+                            <div class="flex gap-4 text-sm font-medium">
+                                <span class="flex items-center gap-2 text-gray-300"><i data-lucide="mail" class="w-4 h-4"></i> bme.ta3@ai.edu</span>
+                                <span class="flex items-center gap-2 text-gray-300"><i data-lucide="map-pin" class="w-4 h-4"></i> AIM Lab 101</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TA 4 -->
+                    <div class="reveal delay-300 bg-surface rounded-3xl overflow-hidden border border-white/10 flex flex-col lg:flex-row-reverse">
+                        <div class="lg:w-1/3 relative h-64 lg:h-auto media-card overflow-hidden">
+                            <img src="https://api.dicebear.com/9.x/notionists/svg?seed=TA4&backgroundColor=1e293b" alt="TA 4" class="w-full h-full object-cover transition-transform duration-700">
+                            <div class="absolute inset-0 bg-accent/10 flex items-center justify-center opacity-0 media-overlay transition-opacity duration-500">
+                                <i data-lucide="play-circle" class="w-16 h-16 text-white drop-shadow-lg"></i>
+                            </div>
+                        </div>
+                        <div class="lg:w-2/3 p-10 flex flex-col justify-center">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-3xl font-bold mb-1">조교4</h3>
+                                    <p class="text-accent font-medium">NLP & Prompt Engineering</p>
+                                </div>
+                                <span class="bg-white/10 text-white px-3 py-1 rounded-full text-sm">Office Hour: Thu 13:00</span>
+                            </div>
+                            <p class="text-gray-400 leading-relaxed mb-6">
+                                인간과 AI 시스템 간의 자연스러운 인터페이스를 위한 언어 모델을 연구합니다.
+                                거대 언어 모델(LLM) API 연동 및 프롬프트 최적화 기법에 대한 가이드를 제공합니다.
+                            </p>
+                            <div class="flex gap-4 text-sm font-medium">
+                                <span class="flex items-center gap-2 text-gray-300"><i data-lucide="mail" class="w-4 h-4"></i> bme.ta4@ai.edu</span>
+                                <span class="flex items-center gap-2 text-gray-300"><i data-lucide="map-pin" class="w-4 h-4"></i> AIM Lab 101</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TA 5 -->
+                    <div class="reveal delay-400 bg-surface rounded-3xl overflow-hidden border border-white/10 flex flex-col lg:flex-row">
+                        <div class="lg:w-1/3 relative h-64 lg:h-auto media-card overflow-hidden">
+                            <img src="https://api.dicebear.com/9.x/notionists/svg?seed=TA5&backgroundColor=1e293b" alt="TA 5" class="w-full h-full object-cover transition-transform duration-700">
+                            <div class="absolute inset-0 bg-accent/10 flex items-center justify-center opacity-0 media-overlay transition-opacity duration-500">
+                                <i data-lucide="play-circle" class="w-16 h-16 text-white drop-shadow-lg"></i>
+                            </div>
+                        </div>
+                        <div class="lg:w-2/3 p-10 flex flex-col justify-center">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-3xl font-bold mb-1">조교5</h3>
+                                    <p class="text-accent font-medium">Data Pipeline & MLOps</p>
+                                </div>
+                                <span class="bg-white/10 text-white px-3 py-1 rounded-full text-sm">Office Hour: Fri 16:00</span>
+                            </div>
+                            <p class="text-gray-400 leading-relaxed mb-6">
+                                "Safe, Scalable, Practical" 대규모 데이터 파이프라인과 모델의 지속적 통합/배포를 담당합니다.
+                                데이터 전처리 병목현상 해결 및 실습 데이터셋 관리를 지원합니다.
+                            </p>
+                            <div class="flex gap-4 text-sm font-medium">
+                                <span class="flex items-center gap-2 text-gray-300"><i data-lucide="mail" class="w-4 h-4"></i> bme.ta5@ai.edu</span>
+                                <span class="flex items-center gap-2 text-gray-300"><i data-lucide="map-pin" class="w-4 h-4"></i> AIM Lab 101</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="bg-deep border-t border-white/10 py-12 text-center text-gray-500">
+        <p class="mb-2">© 2026 AI Engineering Course. All rights reserved.</p>
+        <p class="text-sm">Built to think. Born to solve.</p>
+    </footer>
+
+    <!-- 스크립트 -->
+    <script>
+        // 1. 아이콘 초기화
+        lucide.createIcons();
+
+        // 2. 스크롤 애니메이션 (Intersection Observer) 설정 함수
+        let observer;
+        function initObserver() {
+            if (observer) observer.disconnect();
+            
+            observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            document.querySelectorAll('.page-view.active-view .reveal').forEach((el) => {
+                el.classList.remove('active'); // 리셋
+                observer.observe(el);
+            });
+        }
+
+        // 3. 네비게이션바 스크롤 이펙트
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-deep', 'border-white/10');
+                navbar.classList.remove('bg-deep/80', 'border-transparent');
+            } else {
+                navbar.classList.add('bg-deep/80', 'border-transparent');
+                navbar.classList.remove('bg-deep', 'border-white/10');
+            }
+        });
+
+        // 4. SPA 라우팅 (페이지 전환) 함수
+        window.navigate = function(viewId) {
+            // 모든 뷰 숨기기
+            document.querySelectorAll('.page-view').forEach(el => {
+                el.classList.remove('active-view');
+            });
+            
+            // 타겟 뷰 보이기
+            const targetView = document.getElementById(viewId);
+            targetView.classList.add('active-view');
+            
+            // 맨 위로 스크롤
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            
+            // 애니메이션 재초기화
+            setTimeout(initObserver, 50);
+        }
+
+        // 초기 로드 시 옵저버 실행
+        document.addEventListener("DOMContentLoaded", initObserver);
+    </script>
+</body>
+</html>
